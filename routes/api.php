@@ -30,4 +30,5 @@ Route::group(['middleware' => ['apiJwt']], function() {
     Route::get('users', 'App\Http\Controllers\UserController@index');
 
     Route::post('transaction', 'App\Http\Controllers\TransactionController@store');
+    Route::put('transaction', 'App\Http\Controllers\TransactionController@update');
 });

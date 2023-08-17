@@ -30,11 +30,8 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {
-            $userData = $request->validate([
-                'email' => 'required|email|unique:users',
-                'password' => 'required|min:6',
-                'name' => 'required'
-            ]);
+            $userData = $this->validateUserData($request);
+
             $userData['password'] = bcrypt($userData['password']);
             $userData['type'] = User::USER_TYPE_CUSTOMER;
         
@@ -43,6 +40,18 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
+    }
+
+    /**
+     * Validate user data from the request.
+     */
+    protected function validateUserData(Request $request)
+    {
+        return $request->validate([
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+            'name' => 'required'
+        ]);
     }
 
     /**

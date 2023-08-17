@@ -29,8 +29,8 @@ class TransactionService
         return $transaction;
     }
 
-    public function approveTransaction($transactionId)
+    public function updateApproval($transaction)
     {
-        $this->transactionRepository->updateApproval($transactionId, true);
+        return $this->transactionRepository->updateApproval($transaction);
     }
 }

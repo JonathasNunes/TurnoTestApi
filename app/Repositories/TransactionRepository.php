@@ -28,8 +28,14 @@ class TransactionRepository
         return Transaction::where('account_id', $accountId)->get();
     }
 
-    public function updateApproval($transactionId, $s) 
+    public function updateApproval($data) 
     {
-
+        $transact = $this->transactionModel->find($data['id']);
+        $transact->approval = $data['approval'];
+// dd($transact);
+        if ($transact->save()) {
+            return $transact;
+        }
+        return false;
     }
 }
