@@ -2,28 +2,38 @@
 
 namespace App\Services;
 
+use App\Models\User;
+use App\Repositories\AccountRepository;
 use App\Repositories\UserRepository;
+use App\Services\AccountService;
 
 class UserService
 {
     protected $userRepository;
+    protected $accountService;
 
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
+        $this->accountService = new AccountService(new AccountRepository);
     }
 
     public function createUser(array $data)
     {
-        $existingUser = $this->userRepository->findByUsername($data['username']);
+        $existingUser = $this->userRepository->findByEmail($data['email']);
         if ($existingUser) {
-            throw new \Exception('Username already exists');
+            throw new \Exception('Email already exists');
         }
 
         $data['password'] = bcrypt($data['password']);
-        $data['balance'] = 0;
+        $data['type'] = User::USER_TYPE;
 
-        return $this->userRepository->create($data);
+        $user = $this->userRepository->create($data);
+
+        //If success, create account with 0 balance
+        if (isset($user->id)) {
+            return $this->accountService->createAccount($user);
+        }
     }
 
     public function getUserById($id)
