@@ -29,13 +29,13 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $userData = $request->validate([
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-            'name' => 'required'
-        ]);
-        
         try {
+            $userData = $request->validate([
+                'email' => 'required|email|unique:users',
+                'password' => 'required|min:6',
+                'name' => 'required'
+            ]);
+        
             $user = $this->userService->createUser($userData);
             return response()->json($user, 201);
         } catch (\Exception $e) {
