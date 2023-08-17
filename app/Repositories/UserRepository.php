@@ -23,9 +23,9 @@ class UserRepository
         return $this->userModel->find($id);
     }
 
-    public function findByUsername($username)
+    public function findByEmail($email)
     {
-        return User::where('username', $username)->first();
+        return User::where('email', $email)->first();
     }
 
     public function update($id, $data)

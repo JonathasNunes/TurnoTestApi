@@ -33,9 +33,6 @@ class TransactionService
 
     public function approveTransaction($transactionId)
     {
-        // Lógica para aprovar a transação pelo administrador
         $this->transactionRepository->updateApproval($transactionId, true);
     }
-
-    // Outros métodos de serviço
 }

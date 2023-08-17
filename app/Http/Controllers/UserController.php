@@ -24,28 +24,23 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-    public function register(Request $request)
-    {
-        // Validar dados do request
-        $userData = $request->validate([
-            'username' => 'required|unique:users',
-            'password' => 'required|min:6',
-        ]);
-
-        try {
-            $user = $this->userService->createUser($userData);
-            return response()->json($user, 201);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $userData = $request->validate([
+                'email' => 'required|email|unique:users',
+                'password' => 'required|min:6',
+                'name' => 'required'
+            ]);
+        
+            $user = $this->userService->createUser($userData);
+            return response()->json($user, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 
     /**
