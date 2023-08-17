@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Repositories\AccountRepository;
+use App\Services\AccountService;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
 
@@ -15,20 +17,30 @@ class TransactionController extends Controller
         $this->transactionService = $transactionService;
     }
 
-    public function createTransaction(Request $request)
-    {
-        $user = $request->user();
-
-        // Validar dados do request
-        $transactionData = $request->validate([
-            'user_id' => 'required',
-            'amount' => 'required|numeric|min:0.01',
-            'description' => 'required',
-        ]);
-
-        $transactionData['user_id'] = $user->id;
-
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {   
         try {
+            $user = $request->user();
+
+            $transactionData = $request->validate([
+                'amount' => 'required|numeric|min:0.01',
+            ]);
+
+            $accountService = new AccountService(new AccountRepository);
+            $account = $accountService->getAccountByUserId($user->id);
+            $transactionData['account_id'] = $account->id;
+            $transactionData['type'] = Transaction::TRANSACTION_DEPOSIT;
+            $transactionData['approval'] = Transaction::TRANSACTION_PENDING;
+
+            $file = $request->file('image_name');
+            $imageName = time().'.'.$file->extension();
+            $imagePath = public_path(). '/files';
+            $file->move($imagePath, $imageName);
+            $transactionData['image_url'] = $imageName;
+             
             $transaction = $this->transactionService->createTransaction($transactionData);
             return response()->json($transaction, 201);
         } catch (\Exception $e) {
@@ -45,33 +57,9 @@ class TransactionController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(Transaction $transaction)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Transaction $transaction)
     {
         //
     }

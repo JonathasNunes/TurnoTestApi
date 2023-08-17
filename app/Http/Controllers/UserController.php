@@ -35,6 +35,8 @@ class UserController extends Controller
                 'password' => 'required|min:6',
                 'name' => 'required'
             ]);
+            $userData['password'] = bcrypt($userData['password']);
+            $userData['type'] = User::USER_TYPE_CUSTOMER;
         
             $user = $this->userService->createUser($userData);
             return response()->json($user, 201);
@@ -47,22 +49,6 @@ class UserController extends Controller
      * Display the specified resource.
      */
     public function show(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
     {
         //
     }

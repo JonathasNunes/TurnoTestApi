@@ -18,14 +18,12 @@ class TransactionService
 
     public function createTransaction(array $data)
     {
-        $account = $this->accountService->getAccountByUserId($data['user_id']);
+        // $account = $this->accountService->getAccountByUserId($data['user_id']);
 
-        if ($account->balance < $data['amount']) {
-            throw new \Exception('Insufficient balance');
-        }
+        // if ($account->balance < $data['amount']) {
+        //     throw new \Exception('Insufficient balance');
+        // }
 
-        // Criar a transação pendente
-        $data['approved'] = false;
         $transaction = $this->transactionRepository->create($data);
 
         return $transaction;
