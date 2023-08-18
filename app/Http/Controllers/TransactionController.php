@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Account;
-// use App\Repositories\AccountRepository;
-// use App\Services\AccountService;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
 
@@ -37,32 +35,64 @@ class TransactionController extends Controller
         }
     }
 
+    public function purchase(Request $request) {
+        
+        try{
+            $user = $request->user();
+            $transactionData = $this->validateTransactionData($request, Transaction::TRANSACTION_PURCHASE);
+            $transactionData = $this->prepareTransactionData($transactionData, $user, Transaction::TRANSACTION_PURCHASE);
+            
+            $transaction = new Transaction($transactionData);
+            $newBalance = $this->calculateNewBalance($transaction);
+           
+            $transaction->approval = Transaction::TRANSACTION_APPROVED;
+            
+            if ($this->transactionService->save($transaction)) {
+                $this->updateAccountBalance($transaction->account, $newBalance);
+                return response()->json($transaction, 201);
+            }
+        
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
     /**
      * Validate transaction data from the request.
      */
-    protected function validateTransactionData(Request $request)
+    protected function validateTransactionData(Request $request, $type = Transaction::TRANSACTION_DEPOSIT)
     {
-        return $request->validate([
-            'amount' => 'required|numeric|min:0.01',
-            'image_name' => 'required|image|mimes:jpeg,png,jpg,gif|max:12048', // Adjust mime types and max size
-        ]);
+        if ($type == Transaction::TRANSACTION_DEPOSIT) {
+            return $request->validate([
+                'amount' => 'required|numeric|min:0.01',
+                'image_name' => 'required|image|mimes:jpeg,png,jpg,gif|max:12048',
+            ]);
+        }
+        else {
+            return $request->validate([
+                'amount' => 'required|numeric|min:0.01',
+            ]);
+        }
     }
 
     /**
      * Prepare transaction data for storage.
      */
-    protected function prepareTransactionData(array $transactionData, $user)
+    protected function prepareTransactionData(array $transactionData, $user, $type = Transaction::TRANSACTION_DEPOSIT)
     {
         $account = $user->account;
         $transactionData['account_id'] = $account->id;
-        $transactionData['type'] = Transaction::TRANSACTION_DEPOSIT;
+        $transactionData['type'] = $type;
         $transactionData['approval'] = Transaction::TRANSACTION_PENDING;
 
-        $file = $transactionData['image_name'];
-        $imageName = time() . '.' . $file->extension();
-        $imagePath = public_path('/files');
-        $file->move($imagePath, $imageName);
-        $transactionData['image_url'] = $imageName;
+        if ($type == Transaction::TRANSACTION_DEPOSIT) {
+            $file = $transactionData['image_name'];
+            $imageName = time() . '.' . $file->extension();
+            $imagePath = public_path('/files');
+            $file->move($imagePath, $imageName);
+
+            $transactionData['image_url'] = $imageName;
+        }
 
         return $transactionData;
     }
@@ -91,7 +121,7 @@ class TransactionController extends Controller
         try {
             $updatedTransaction = $this->transactionService->updateApproval($request);
 
-            if ($updatedTransaction) {
+            if ($updatedTransaction && $updatedTransaction->approval == Transaction::TRANSACTION_APPROVED) {
                 $newBalance = $this->calculateNewBalance($updatedTransaction);
                 $this->updateAccountBalance($updatedTransaction->account, $newBalance);
             }
@@ -108,6 +138,8 @@ class TransactionController extends Controller
             if ($transaction->account->balance >= $transaction->amount) {
                 return $transaction->account->balance - $transaction->amount;
             }
+            $transaction->approval = Transaction::TRANSACTION_REJECTED;
+            $transaction->save();
             throw new \Exception('Insufficient balance');
         }
 

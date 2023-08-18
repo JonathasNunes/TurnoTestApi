@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Transaction;
 use App\Services\AccountService;
 use App\Repositories\TransactionRepository;
 
@@ -18,15 +19,13 @@ class TransactionService
 
     public function createTransaction(array $data)
     {
-        // $account = $this->accountService->getAccountByUserId($data['user_id']);
-
-        // if ($account->balance < $data['amount']) {
-        //     throw new \Exception('Insufficient balance');
-        // }
-
         $transaction = $this->transactionRepository->create($data);
-
         return $transaction;
+    }
+
+    public function save(Transaction $transaction) 
+    {
+        return $transaction->save();
     }
 
     public function updateApproval($transaction)

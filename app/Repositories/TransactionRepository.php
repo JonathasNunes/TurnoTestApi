@@ -32,7 +32,7 @@ class TransactionRepository
     {
         $transact = $this->transactionModel->find($data['id']);
         $transact->approval = $data['approval'];
-// dd($transact);
+
         if ($transact->save()) {
             return $transact;
         }
