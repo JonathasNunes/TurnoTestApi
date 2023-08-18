@@ -53,12 +53,4 @@ class UserController extends Controller
             'name' => 'required'
         ]);
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
-    }
 }
