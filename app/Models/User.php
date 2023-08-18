@@ -12,6 +12,7 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
     const USER_TYPE_CUSTOMER = 'customer';
+    const USER_TYPE_ADMIN = 'admin';
 
     protected $fillable = [
         'name',

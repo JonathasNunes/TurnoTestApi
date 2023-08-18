@@ -16,12 +16,12 @@ class AccountRepository
         return Account::find($id);
     }
 
-    // public function findByUserId($userId)
-    // {
-    //     return Account::where('user_id', $userId)->first();
-    // }
+    public function findByUserId($userId)
+    {
+        return Account::where('user_id', $userId)->first();
+    }
 
-    public function findByUserId(int $userId) 
+    public function findWithTransactionsByUserId(int $userId) 
     {
         $results = Account::with(['transactions'])->where('user_id', $userId);
         return $results->get();     

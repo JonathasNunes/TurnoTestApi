@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Account;
+use App\Models\User;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
 
@@ -100,9 +101,19 @@ class TransactionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $user = $request->user();
+        try{
+            if ($user->type == User::USER_TYPE_ADMIN) {
+                $transactions = $this->transactionService->findPendingApproval();
+                return response()->json($transactions, 201);
+            } else {
+                throw new \Exception('Only admin has permission to perform this task!');
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 
     /**

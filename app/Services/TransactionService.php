@@ -32,4 +32,9 @@ class TransactionService
     {
         return $this->transactionRepository->updateApproval($transaction);
     }
+
+    public function findPendingApproval() 
+    {
+        return $this->transactionRepository->findPendingApproval();
+    }
 }

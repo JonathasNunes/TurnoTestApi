@@ -18,10 +18,6 @@ class AccountController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // public function index()
-    // {
-    //     //
-    // }
     public function index(Request $request)
     {
         $user = $request->user();

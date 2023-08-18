@@ -21,6 +21,7 @@ class Transaction extends Model
         'description',
         'type',
         'image_url',
+        'approval',
     ];
 
     public function account()
