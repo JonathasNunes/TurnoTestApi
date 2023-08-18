@@ -15,20 +15,19 @@ class AccountController extends Controller
         $this->accountService = $accountService;
     }
 
-    public function getAccount(Request $request)
+    /**
+     * Display a listing of the resource.
+     */
+    // public function index()
+    // {
+    //     //
+    // }
+    public function index(Request $request)
     {
         $user = $request->user();
         $account = $this->accountService->getAccountByUserId($user->id);
 
         return response()->json($account);
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
     }
 
     /**
