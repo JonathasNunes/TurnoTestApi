@@ -30,7 +30,7 @@ class AccountService
 
     public function getAccountByUserId($userId)
     {
-        return $this->accountRepository->findByUserId($userId);
+        return $this->accountRepository->findWithTransactionsByUserId($userId);
     }
 
     public function updateAccountBalance($accountId, $newBalance)

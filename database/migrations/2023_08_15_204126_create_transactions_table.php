@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->text('description')->nullable();
             $table->enum('approval', ['approved', 'rejected', 'pending'])->default('pending');
-            $table->text('image_url');
+            $table->text('image_url')->nullable();
             $table->timestamps();
         });
     }

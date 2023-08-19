@@ -30,11 +30,10 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {
-            $userData = $request->validate([
-                'email' => 'required|email|unique:users',
-                'password' => 'required|min:6',
-                'name' => 'required'
-            ]);
+            $userData = $this->validateUserData($request);
+
+            $userData['password'] = bcrypt($userData['password']);
+            $userData['type'] = User::USER_TYPE_CUSTOMER;
         
             $user = $this->userService->createUser($userData);
             return response()->json($user, 201);
@@ -44,26 +43,14 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Validate user data from the request.
      */
-    public function show(User $user)
+    protected function validateUserData(Request $request)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
-    {
-        //
+        return $request->validate([
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+            'name' => 'required'
+        ]);
     }
 }

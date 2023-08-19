@@ -11,7 +11,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
-    const USER_TYPE = 'customer';
+    const USER_TYPE_CUSTOMER = 'customer';
+    const USER_TYPE_ADMIN = 'admin';
 
     protected $fillable = [
         'name',
