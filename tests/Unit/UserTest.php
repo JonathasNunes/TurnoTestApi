@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-// use PHPUnit\Framework\TestCase;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
@@ -11,6 +10,7 @@ use App\Models\Account;
 
 class UserTest extends TestCase
 {
+    use RefreshDatabase;
 
     public function test_check_if_user_columns_is_correct() 
     {
