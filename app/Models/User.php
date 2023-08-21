@@ -11,6 +11,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
+    const USER_TYPE_CUSTOMER = 'customer';
+    const USER_TYPE_ADMIN = 'admin';
 
     protected $fillable = [
         'name',
@@ -31,6 +33,11 @@ class User extends Authenticatable implements JWTSubject
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function account()
+    {
+        return $this->hasOne(Account::class);
     }
 
     /**

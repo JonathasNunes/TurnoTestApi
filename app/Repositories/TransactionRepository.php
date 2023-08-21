@@ -28,8 +28,19 @@ class TransactionRepository
         return Transaction::where('account_id', $accountId)->get();
     }
 
-    public function updateApproval($transactionId, $s) 
+    public function findPendingApproval() 
     {
+        return Transaction::where('approval', Transaction::TRANSACTION_PENDING)->get();
+    }
 
+    public function updateApproval($data) 
+    {
+        $transact = $this->transactionModel->find($data['id']);
+        $transact->approval = $data['approval'];
+
+        if ($transact->save()) {
+            return $transact;
+        }
+        return false;
     }
 }

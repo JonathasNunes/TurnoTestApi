@@ -24,15 +24,17 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-    public function register(Request $request)
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
-        // Validar dados do request
-        $userData = $request->validate([
-            'username' => 'required|unique:users',
-            'password' => 'required|min:6',
-        ]);
-
         try {
+            $userData = $this->validateUserData($request);
+
+            $userData['password'] = bcrypt($userData['password']);
+            $userData['type'] = User::USER_TYPE_CUSTOMER;
+        
             $user = $this->userService->createUser($userData);
             return response()->json($user, 201);
         } catch (\Exception $e) {
@@ -41,34 +43,14 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Validate user data from the request.
      */
-    public function store(Request $request)
+    protected function validateUserData(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
-    {
-        //
+        return $request->validate([
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+            'name' => 'required'
+        ]);
     }
 }

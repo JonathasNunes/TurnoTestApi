@@ -13,12 +13,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 Route::post('auth/login', 'App\Http\Controllers\AuthController@login');
+Route::post('user', 'App\Http\Controllers\UserController@store');
 
 Route::group(['middleware' => ['apiJwt']], function() {
 
@@ -28,4 +24,11 @@ Route::group(['middleware' => ['apiJwt']], function() {
 
     Route::get('users', 'App\Http\Controllers\UserController@index');
 
+    Route::post('transaction', 'App\Http\Controllers\TransactionController@store');
+    Route::put('transaction', 'App\Http\Controllers\TransactionController@update');
+    Route::get('transactions', 'App\Http\Controllers\TransactionController@index');
+
+    Route::post('purchase', 'App\Http\Controllers\TransactionController@purchase');
+
+    Route::get('account', 'App\Http\Controllers\AccountController@index');
 });

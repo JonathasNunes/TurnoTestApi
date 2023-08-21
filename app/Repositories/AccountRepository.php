@@ -21,6 +21,12 @@ class AccountRepository
         return Account::where('user_id', $userId)->first();
     }
 
+    public function findWithTransactionsByUserId(int $userId) 
+    {
+        $results = Account::with(['transactions'])->where('user_id', $userId);
+        return $results->get();     
+    }
+
     public function update($id, $data)
     {
         $account = $this->findById($id);

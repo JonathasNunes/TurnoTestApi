@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use App\Repositories\AccountRepository;
 
 class AccountService
@@ -13,15 +14,27 @@ class AccountService
         $this->accountRepository = $accountRepository;
     }
 
+    public function createAccount(User $data)
+    {
+        $account = $this->accountRepository->findByUserId($data->id);
+
+        if ($account) {
+            throw new \Exception('User already have Account');
+        }
+
+        $newBalance['user_id'] = $data->id;
+        $newBalance['balance'] = 0.00;
+        
+        return $this->accountRepository->create($newBalance);
+    }
+
     public function getAccountByUserId($userId)
     {
-        return $this->accountRepository->findByUserId($userId);
+        return $this->accountRepository->findWithTransactionsByUserId($userId);
     }
 
     public function updateAccountBalance($accountId, $newBalance)
     {
         return $this->accountRepository->updateBalance($accountId, $newBalance);
     }
-
-    // Outros métodos de serviço
 }
