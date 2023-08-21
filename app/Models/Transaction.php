@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class Transaction extends Model
 {
@@ -28,4 +29,15 @@ class Transaction extends Model
     {
         return $this->belongsTo(Account::class);
     }
+
+    public static function validateTransactionAmount($data)
+{
+    $account = Account::find($data['account_id']);
+    
+    if ($data['type'] === self::TRANSACTION_PURCHASE && $data['amount'] > $account->balance) {
+        throw ValidationException::withMessages([
+            'amount' => 'The purchase amount cannot exceed the account balance.',
+        ]);
+    }
+}
 }
