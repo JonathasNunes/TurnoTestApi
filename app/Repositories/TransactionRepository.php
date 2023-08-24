@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Account;
 use App\Models\Transaction;
 
 class TransactionRepository
@@ -30,7 +31,7 @@ class TransactionRepository
 
     public function findPendingApproval() 
     {
-        return Transaction::where('approval', Transaction::TRANSACTION_PENDING)->get();
+        return Transaction::with(['account', 'account.user'])->where('approval', Transaction::TRANSACTION_PENDING)->get();
     }
 
     public function updateApproval($data) 
