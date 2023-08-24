@@ -28,7 +28,7 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (!$token = JWTAuth::attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Não Autorizado'], 401);
         }
 
         return $this->respondWithToken($token);
@@ -52,7 +52,7 @@ class AuthController extends Controller
     public function logout()
     {
         auth('api')->logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Logout realizado com sucesso']);
     }
 
     /**

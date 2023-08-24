@@ -109,7 +109,7 @@ class TransactionController extends Controller
                 $transactions = $this->transactionService->findPendingApproval();
                 return response()->json($transactions, 201);
             } else {
-                throw new \Exception('Only admin has permission to perform this task!');
+                throw new \Exception('Apenas o usuário Administrador tem permissão para realizar esta tarefa!');
             }
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -143,14 +143,14 @@ class TransactionController extends Controller
             }
             $transaction->approval = Transaction::TRANSACTION_REJECTED;
             $transaction->save();
-            throw new \Exception('Insufficient balance');
+            throw new \Exception('Não há saldo suficiente');
         }
 
         if ($transaction->type === Transaction::TRANSACTION_DEPOSIT) {
             return $transaction->account->balance + $transaction->amount;
         }
 
-        throw new \Exception('Invalid transaction type');
+        throw new \Exception('Tipo de transação inválida');
     }
 
     private function updateAccountBalance(Account $account, float $newBalance): void

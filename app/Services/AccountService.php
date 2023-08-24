@@ -19,7 +19,7 @@ class AccountService
         $account = $this->accountRepository->findByUserId($data->id);
 
         if ($account) {
-            throw new \Exception('User already have Account');
+            throw new \Exception('Conta já existente');
         }
 
         $newBalance['user_id'] = $data->id;
